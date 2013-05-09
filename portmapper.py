@@ -1,12 +1,5 @@
-"""
-verdratungsplan:
-
-"""
-
 import sys
 import core.elvipio88 as io
-
-devaddr = "192.168.1.100" # standard ip
 
 if len(sys.argv) > 2:
     if sys.argv[1] == "-h" or sys.argv[1] == "--help":
@@ -27,24 +20,14 @@ print " [i] got soup"
 pfiltered = io.filterports(soup)
 print " [i] filtered lines containing port state"
 
-
 print " [i] State of INports 1-8:"
-in_portstate = io.gps(pfiltered, ptype='in')
+in_portstate = io.getport(pfiltered, ptype='in')
 
-i = 0
-while 1:
-  print " [-] port",i+1,"is active - ",in_portstate[i]
-  i = i +1
-  if i == 8:
-    break
-
+for i in range(8):
+    print " [-] port",i+1,"is active - ",in_portstate[i]
 
 print " [i] State of OUTports 1-8:"
-out_portstate =  io.gps(pfiltered, ptype='out')
+out_portstate =  io.getport(pfiltered, ptype='out')
 
-i = 0
-while 1:
-  print " [-] port",i+1,"is active - ",out_portstate[i]
-  i = i +1
-  if i == 8:
-    break
+for i in range(8):
+    print " [-] port",i+1,"is active - ",out_portstate[i]

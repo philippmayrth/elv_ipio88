@@ -2,7 +2,7 @@
 """
 Autor: Philipp Mayr
 Date: 26. 11. 2012
-Note: When teh door is opended then pause iTunes. When closed again play.
+Note: When the door is opended then pause iTunes. When closed again play.
 
 """
 
@@ -39,24 +39,22 @@ def ProcessSoup():
     
     
     print  OMUInfo,"got State of INports 1-8",OMUEndSig
-    in_portstate = io.gps(pfiltered, ptype='in')
+    in_portstate = io.getport(pfiltered, ptype='in')
     return in_portstate
 
 
 def iTunesControll(in_portstate):
     # Controll iTunes
-    # array index 0 (for port 1)
     print OMUProgram,"port 1 is active - ",in_portstate[0]
     
-    if in_portstate[0] == True: # port 1
+    if in_portstate[0] == True:
         print OMUProgram,"Play iTunes"
         os.system(iTunesPlay)
-    
     else:
         print OMUProgram,"Pause iTunes"
         os.system(iTunesPause)
     
-    time.sleep(2) # system entlasten # ipio packt 120ms
+    time.sleep(2) # system entlasten # ipio packt ~120ms
     print
 
 
@@ -76,7 +74,5 @@ def main():
         print OMUFriendly,"     iyi günler!",OMUEndSig
 
 
-
 if __name__ == "__main__":
     main() # init Program
-

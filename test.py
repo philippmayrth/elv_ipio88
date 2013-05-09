@@ -16,13 +16,10 @@ print " [i] filtered lines containing port state"
 print "\n\n"
 
 print " [i] State of INports 1-8:\n"
-print str(io.gps(pfiltered, ptype='in'))+"\n"
-
+print str(io.getport(pfiltered, ptype='in'))+"\n"
 
 print " [i] State of OUTports 1-8:\n"
-print str(io.gps(pfiltered, ptype='out'))+"\n"
-
-
+print str(io.getport(pfiltered, ptype='out'))+"\n"
 
 
 print "\n [i] ",time.ctime() # print the time
