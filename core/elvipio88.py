@@ -9,7 +9,7 @@ This is on the do what ever you want licence.
 """
 
 # Using the old version of BeautifulSoup (version 3.x)
-from BeautifulSoup import BeautifulSoup
+import core.BeautifulSoup
 import urllib2
 from os import name # , system
 
@@ -22,25 +22,25 @@ TODO: 	1. Add PING (icmp)
 
 
 def getsoup(IPIO_addr="192.168.1.100"):
-  htmlsoup = urllib2.urlopen("http://"+IPIO_addr+"/ipio.cgi").read()
-  soup = BeautifulSoup(htmlsoup)
-  return soup
+    htmlsoup = urllib2.urlopen("http://"+IPIO_addr+"/ipio.cgi").read()
+    soup = BeautifulSoup(htmlsoup)
+    return soup
 
 
 def filterports(IPIO_addr="192.168.1.100", ptype='in', soup=0):
     if soup != 0:
         pfiltered = soup.findAll('input', type="checkbox")
         return pfiltered
-    else
+    else:
         soup = getsoup(IPIO_addr)
         return pfiltered
 
 
 def getport(IPIO_addr="192.168.1.100", ptype='in', pfiltered=0):
     if pfiltered != 0:
-    pnr = 0 # pnr = 0 # define portnr. -> in ports 1-8
+        pnr = 0 # pnr = 0 # define portnr. -> in ports 1-8
     if ptype == 'out':
-      pnr = 8 # if ptype == out: portnr. = 8 -> out ports 9-16
+        pnr = 8 # if ptype == out: portnr. = 8 -> out ports 9-16
     # search soup for porttype
     rlist = [] # Returnlistemty list add items with: inpstate.append()
     for pnr in range(16):
@@ -52,7 +52,16 @@ def getport(IPIO_addr="192.168.1.100", ptype='in', pfiltered=0):
       if ptype == 'out' and pnr == 16:
           return rlist
 
+def getportHEX(IPIO_addr="192.168.1.100", pfiltered=0):
+    # Get The BIN value of the Port state
+    PortInBIN = getport(IPIO_addr, 'in', pfiltered)
+    PortOutBIN = getport(IPIO_addr, 'out', pfiltered)
 
+    PortTotalBIN = str(PortInBIN) + str(PortOutBIN)
+    PortHEX = hex(int(str(PortTotalBIN), 2))
+    return PortHEX
+
+"""
 def setport(IPIO_addr="192.168.1.100", NewPortstate[], pfiltered=0):
     # read the previous port states
     portstate = getport(pfiltered, 'out')
@@ -63,4 +72,4 @@ def setport(IPIO_addr="192.168.1.100", NewPortstate[], pfiltered=0):
     # requelsting the API URL to set all ports
     requeststring = "?port1=",setport[0],"&port2=",setport[1],"&port3=",setport[2],"&port4=",setport[3],"&port5=",setport[4],"&port6=",setport[5],"&port7=",setport[6],"&port8=",setport[7]
     response = urllib2.urlopen("http://"+IPIO_addr+"/ipio.cgi").read()
-
+"""
