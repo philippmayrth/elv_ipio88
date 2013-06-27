@@ -32,8 +32,8 @@ class iTunes: # iTunes controll Object
 
 
 if __name__ == "__main__":
-
-    io = iodevice("192.168.1.100") # init object
+    
+    io = iodevice("192.168.1.100")
     iTunes = iTunes()
     
     print OMU.Info,"Started at ",time.ctime(),OMU.EndSig
