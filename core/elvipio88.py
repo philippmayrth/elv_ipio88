@@ -21,7 +21,6 @@ from core.BeautifulSoup import BeautifulSoup
 
 
 class elvipio88:
-    soup = None
     
     def __init__(self, address="192.168.1.100"):
         self.address = address
@@ -29,17 +28,16 @@ class elvipio88:
     def getsoup(self):
         htmlsoup = urllib.urlopen("http://"+self.address+"/ipio.cgi").read()
         soup = BeautifulSoup(htmlsoup)
-        self.soup = soup
-        return False
+        return soup
     
-    def getport(self):
-        if self.soup == None:
-            self.getsoup()
-        if self.soup == False:
+    def getport(self, soup=None):
+        if soup == None:
+            soup = self.getsoup()
+        if soup == False:
             return True
         
         # isolate lines containing port state
-        pfiltered = self.soup.findAll("input", type="checkbox")
+        pfiltered = soup.findAll("input", type="checkbox")
         rlist = []
         for pnr in range(16):
             pstate = "checked" in str(pfiltered[pnr]) # returns True or False
@@ -49,4 +47,3 @@ class elvipio88:
     def setport(self, newpstate):
         pass
 
-    
