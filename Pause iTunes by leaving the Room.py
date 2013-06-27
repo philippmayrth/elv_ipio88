@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-1 -*-
+#! /usr/bin/env python
 """
 Autor: Philipp Mayr
 Date: 26. 11. 2012
@@ -7,72 +7,49 @@ Note: When the door is opended then pause iTunes. When closed again play.
 """
 
 import sys, os, time
-import core.elvipio88 as io
+from core.elvipio88 import elvipio88 as iodevice
 
-# iTunes Ctrl
-iTunesState = "osascript -e \'tell application \"iTunes\" to player state as string\'"
-iTunesPlay = "osascript -e \'tell application \"iTunes\" to play\'"
-iTunesPause = "osascript -e \'tell application \"iTunes\" to pause\'"
-# - iTunes Ctrl
 
-# Output Marukup - TODO: Add support for HTML
-OMUWarnign = " \033[1;31m[\033[5;31m!\033[m\033[1;31m] " # red
-OMUInfo = "\033[0;34m [i] "
-OMUProgram = "\033[0;32m [-] "
-OMUFriendly = "\033[0;35m"
-OMUEndSig = "\033[m"
-# - Terminal Formating
+class OMU: # Ouptput Markup - Terminal and HTML formating
+    Warnign = " \033[1;31m[\033[5;31m!\033[m\033[1;31m] " # red
+    Info = "\033[0;34m [i] "
+    Program = "\033[0;32m [-] "
+    Friendly = "\033[0;35m"
+    EndSig = "\033[m"
 
-devaddr = "192.168.1.100"
 
-# Get and Process the Soup
-def ProcessSoup():
-    try:
-        soup = io.getsoup(devaddr)
-    except:
-        print >> sys.stderr, OMUWarnign,"no rout to host\033[0;31m - ",time.ctime(),OMUEndSig
-        return "error"
-    print OMUInfo,"got soup",OMUEndSig
+class iTunes: # iTunes controll Object
+    State = "osascript -e \'tell application \"iTunes\" to player state as string\'"
+    Play = "osascript -e \'tell application \"iTunes\" to play\'"
+    Pause = "osascript -e \'tell application \"iTunes\" to pause\'"
     
-    pfiltered = io.filterports(soup)
-    print OMUInfo,"filtered lines containing port state",OMUEndSig
+    def pause(self):
+        os.system(self.Pause)
     
-    
-    print  OMUInfo,"got State of INports 1-8",OMUEndSig
-    in_portstate = io.getport(pfiltered, ptype='in')
-    return in_portstate
+    def play(self):
+        os.system(self.Play)
 
-
-def iTunesControll(in_portstate):
-    # Controll iTunes
-    print OMUProgram,"port 1 is active - ",in_portstate[0]
-    
-    if in_portstate[0] == True:
-        print OMUProgram,"Play iTunes"
-        os.system(iTunesPlay)
-    else:
-        print OMUProgram,"Pause iTunes"
-        os.system(iTunesPause)
-    
-    time.sleep(2) # system entlasten # ipio packt ~120ms
-    print
-
-
-def main():
-    print OMUInfo,"Started at ",time.ctime(),OMUEndSig
-    print OMUInfo,"using the address: ",devaddr," for the IO",OMUEndSig
-
-    try:
-        while 1: # endlosschleife
-            in_portstate = ProcessSoup()
-            if in_portstate != "error":
-                iTunesControll(in_portstate)
-            else:
-                time.sleep(30) # system entlasten (30 sek) pause bevor reconnect.
-    except KeyboardInterrupt:
-        print OMUInfo,"Ended at ",time.ctime(),OMUEndSig
-        print OMUFriendly,"     iyi günler!",OMUEndSig
 
 
 if __name__ == "__main__":
-    main() # init Program
+
+    io = iodevice("192.168.1.100") # init object
+    iTunes = iTunes()
+    
+    print OMU.Info,"Started at ",time.ctime(),OMU.EndSig
+    print OMU.Info,"using this address: ",io.address," for the IO",OMU.EndSig
+    
+    try:
+        while 1:
+            portstate = io.getport()
+            
+            if portstate[0] == True:
+                iTunes.play()
+            elif portstate[0] == False:
+                iTunes.pause()
+            
+            time.sleep(30)
+
+    except KeyboardInterrupt:
+        print OMU.Info,"Ended at ",time.ctime(),OMU.EndSig
+        print OMU.Friendly,"have a nice day!",OMU.EndSig
